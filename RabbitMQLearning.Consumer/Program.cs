@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQLearning.Consumer.services;
 using RabbitMQLearning.Producer.Extensions;
 using RabbitMQLearning.Producer.Models;
 using System.Text;
@@ -16,9 +17,10 @@ var builder = new ConfigurationBuilder()
 var config = builder.Build();
 IHost _host = Host.CreateDefaultBuilder().Build();
 
-var learningQueue = config["RabbitMQQueues:Learning"];
+var learningQueue = config["RabbitMQQueues:LearningDelayed"];
 Console.WriteLine("Start listening");
 Console.WriteLine($"Start listening queue: {learningQueue}");
+
 
 var factory = new ConnectionFactory
 {
@@ -46,7 +48,7 @@ consumer.Received += (model, eventArgs) =>
     {
         var result = JsonConvert.DeserializeObject<LearningMessage>(message);
         Console.WriteLine($"Processing message: {message}");
-        channel.BasicAck(eventArgs.DeliveryTag, false);
+        channel.BasicAck(eventArgs.DeliveryTag, true);
     }
     catch (Exception ex)
     {

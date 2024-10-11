@@ -6,5 +6,7 @@
         public string UserName { get; set; }
         public string Password { get; set; }
         public Tuple<string, string> LeaningQueue { get; set; }
+        public Tuple<string, string> LeaningBatchQueue { get; set; }
+        public Tuple<string, string> LeaningDelayedQueue { get; set; }
     }
 }

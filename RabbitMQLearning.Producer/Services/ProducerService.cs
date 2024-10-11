@@ -16,16 +16,38 @@ namespace RabbitMQLearning.Producer.Services
             _rabbitMQConfiguration = rabbitMQConfiguration;
         }
 
-        public async Task Process()
+        public async Task ProcessAtomic()
+        {
+            foreach (var item in Enumerable.Range(1, 100000))
+            {
+                var learningMessage = new LearningMessage();
+                await _rabbitMQService.Publish<LearningMessage>(
+                    learningMessage,
+                    _rabbitMQConfiguration.LeaningQueue.Item1,
+                    _rabbitMQConfiguration.LeaningQueue.Item2);
+            }
+        }
+        public async Task ProcessBatch()
         {
             foreach (var item in Enumerable.Range(1, 100000))
             {
                 var learningMessages = Enumerable.Range(1, 200).Select(o => new LearningMessage()).ToList();
                 await _rabbitMQService.PublishBatch<LearningMessage>(
                     learningMessages,
-                    _rabbitMQConfiguration.LeaningQueue.Item1,
-                    _rabbitMQConfiguration.LeaningQueue.Item2);
+                    _rabbitMQConfiguration.LeaningBatchQueue.Item1,
+                    _rabbitMQConfiguration.LeaningBatchQueue.Item2);
             }
-        }       
+        }
+        public async Task ProcessDelayed()
+        {
+            foreach (var item in Enumerable.Range(1, 100000))
+            {
+                var learningMessage = new LearningMessage();
+                await _rabbitMQService.PublishDelayed<LearningMessage>(
+                    learningMessage,
+                    _rabbitMQConfiguration.LeaningDelayedQueue.Item1,
+                    _rabbitMQConfiguration.LeaningDelayedQueue.Item2);
+            }
+        }
     }
 }

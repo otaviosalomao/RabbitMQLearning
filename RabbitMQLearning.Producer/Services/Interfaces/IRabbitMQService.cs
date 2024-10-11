@@ -4,5 +4,6 @@
     {
         Task Publish<T>(T obj, string queue, string exchange);
         Task PublishBatch<T>(IEnumerable<T> obj, string queue, string exchange);
+        Task PublishDelayed<T>(T obj, string queue, string exchange);
     }
 }

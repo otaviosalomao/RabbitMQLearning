@@ -8,6 +8,8 @@ namespace RabbitMQLearning.Producer.Services.Interfaces
 {
     interface IProducerService
     {
-        Task Process();
+        Task ProcessAtomic();
+        Task ProcessBatch();
+        Task ProcessDelayed();
     }
 }

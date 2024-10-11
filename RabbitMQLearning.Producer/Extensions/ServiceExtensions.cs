@@ -22,6 +22,14 @@ namespace RabbitMQLearning.Producer.Extensions
                 LeaningQueue = new Tuple<string, string>(
                     configuration["RabbitMQQueues:Learning:Name"],
                     configuration["RabbitMQQueues:Learning:Exchange"]
+                ),
+                LeaningBatchQueue = new Tuple<string, string>(
+                    configuration["RabbitMQQueues:LearningBatch:Name"],
+                    configuration["RabbitMQQueues:LearningBatch:Exchange"]
+                ),
+                LeaningDelayedQueue = new Tuple<string, string>(
+                    configuration["RabbitMQQueues:LearningDelayed:Name"],
+                    configuration["RabbitMQQueues:LearningDelayed:Exchange"]
                 )
             };
             services.AddScoped<IRabbitMQService, RabbitMQService>();

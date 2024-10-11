@@ -46,5 +46,21 @@ namespace RabbitMQLearning.Producer.Services
             }
             basicPublishBatch.Publish();
         }
+        public async Task PublishDelayed<T>(T obj, string queueName, string exchange)
+        {
+            var delayBind = "delayBind";
+            var json = JsonConvert.SerializeObject(obj);
+            var body = Encoding.UTF8.GetBytes(json);
+            using var connection = _connectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
+            IDictionary<string, object> args = new Dictionary<string, object> { { "x-delayed-type", "direct" } };
+            channel.ExchangeDeclare(exchange, "x-delayed-message", true, false, args);
+            var queue = channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueBind(queue, exchange, delayBind);
+            var basicProperties = channel.CreateBasicProperties();
+            basicProperties.Headers = new Dictionary<string, object> { { "x-delay", 60000 } };
+            channel.BasicPublish(exchange: exchange, routingKey: delayBind, basicProperties: basicProperties, body: body);
+            Console.WriteLine($"Processing message: {json}");
+        }
     }
 }
