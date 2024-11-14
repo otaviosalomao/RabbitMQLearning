@@ -17,6 +17,6 @@ IHost _host = Host.CreateDefaultBuilder().ConfigureServices(services =>
 }).Build();
 Console.WriteLine("Start publishing messages");
 var producerService = _host.Services.GetRequiredService<IProducerService>();
-//await producerService.ProcessAtomic();
-//await producerService.ProcessBatch();
-await producerService.ProcessDelayed();
+await producerService.ProcessAtomic();
+await producerService.ProcessBatch();
+//await producerService.ProcessDelayed();

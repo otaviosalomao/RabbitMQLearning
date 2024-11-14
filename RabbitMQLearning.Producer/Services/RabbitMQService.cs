@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQLearning.Producer.Models;
 using RabbitMQLearning.Producer.Services.Interfaces;
@@ -14,7 +15,8 @@ namespace RabbitMQLearning.Producer.Services
         {
             _connectionFactory = new ConnectionFactory
             {
-                HostName = rabbitMQConfiguration.HostName,
+                Uri = new Uri(rabbitMQConfiguration.HostName),
+                //HostName = rabbitMQConfiguration.HostName,
                 UserName = rabbitMQConfiguration.UserName,
                 Password = rabbitMQConfiguration.Password
             };
@@ -26,6 +28,8 @@ namespace RabbitMQLearning.Producer.Services
             var body = Encoding.UTF8.GetBytes(json);
             using var connection = _connectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
+            channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout);
+            channel.QueueDeclare(queue: queue, durable: true, autoDelete: false, exclusive: false);
             channel.QueueBind(queue: queue, exchange: exchange, routingKey: string.Empty);
             channel.BasicPublish(exchange: exchange,
                                  routingKey: string.Empty,
@@ -38,6 +42,8 @@ namespace RabbitMQLearning.Producer.Services
             var body = Encoding.UTF8.GetBytes(json);
             using var connection = _connectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
+            channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout);
+            channel.QueueDeclare(queue: queue, durable: true, autoDelete: false, exclusive: false);
             channel.QueueBind(queue: queue, exchange: exchange, routingKey: string.Empty);
             var basicPublishBatch = channel.CreateBasicPublishBatch();
             foreach (var item in obj)
