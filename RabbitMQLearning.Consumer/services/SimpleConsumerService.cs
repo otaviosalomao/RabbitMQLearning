@@ -32,7 +32,7 @@ namespace RabbitMQLearning.Consumer.services
                 var message = Encoding.UTF8.GetString(body);
                 try
                 {
-                    var result = JsonConvert.DeserializeObject<List<LearningMessage>>(message);
+                    var result = JsonConvert.DeserializeObject<LearningMessage>(message);
                     Console.WriteLine($"Processing message: {message}");
                     channel.BasicAck(eventArgs.DeliveryTag, false);
                 }

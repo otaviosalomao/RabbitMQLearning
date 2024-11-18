@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQLearning.Consumer.services;
+using RabbitMQLearning.Consumer.services.Interfaces;
 using RabbitMQLearning.Producer.Models;
 
-namespace RabbitMQLearning.Producer.Extensions
+namespace RabbitMQLearning.Consumer.Extensions
 {
     public static class ServiceExtensions
     {  
@@ -19,6 +21,11 @@ namespace RabbitMQLearning.Producer.Extensions
                 )
             };            
             services.AddSingleton(rabbitMqConfiguration);
+        }
+
+        public static void ConfigureServices(this IServiceCollection services)
+        {
+            services.AddTransient<IConsumerService, ConsumerService>();
         }
     }
 }
